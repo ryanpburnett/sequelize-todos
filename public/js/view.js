@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', (e) => {
   const form = document.getElementById('todo-form')
   const newTodoInput = document.querySelector('input.new-item')
   const todoListSpan = document.querySelector('.todo-container')
-
+  
   const getTodos = () => {
     fetch('/api/todos')
       .then(response => response.json())
@@ -21,11 +21,18 @@ document.addEventListener('DOMContentLoaded', (e) => {
         <button data-id="${todo.id}" class="complete btn btn-primary">✓</button>
       </li>`
 
-      todoListSpan.innerHTML = li
     }).join('')
 
       todoListSpan.innerHTML = todosHTML
   }
+
+const deleteTodos = id => {
+  fetch(`/api/todos/${id}`, {
+    method: 'DELETE'
+  })
+  .then(getTodos)
+  .catch(err => console.error(err))
+}
 
   form.addEventListener('submit', e => {
     e.preventDefault()
@@ -41,5 +48,15 @@ document.addEventListener('DOMContentLoaded', (e) => {
     .then(getTodos)
     .catch(err => console.error(err))
   })
+
+  todoListSpan.addEventListener('click', e => {
+    const target = e.target
+    const id = target.getAttribute('data-id')
+
+    if (e.target.maches('.delete')){
+      deleteTodos(id)
+    }
+  })
+
   getTodos()
 });
